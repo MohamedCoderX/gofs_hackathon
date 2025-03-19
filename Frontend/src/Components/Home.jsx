@@ -12,7 +12,7 @@ const Home = () => {
         };
         fetchReports();
     }, []);
-
+//asdasd
     return (
         <div>
             <h2>Waste Reports</h2>
