@@ -1,24 +1,54 @@
-import { useEffect, useState } from 'react';
-import { getReports } from './services/api';
-import ReportCard from './ReportCard';
+import { useEffect, useState } from "react";
+import { getReports } from "./services/api";
+import ReportCard from "./ReportCard";
 
 const Home = () => {
     const [reports, setReports] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchReports = async () => {
-            const { data } = await getReports();
-            setReports(data);
+            setLoading(true);
+            try {
+                const { data } = await getReports();
+                // ✅ Show only reports that are "Pending" or "In Progress"
+                const filteredReports = data.filter(report => report.status !== "Cleaned");
+                setReports(filteredReports);
+            } catch (err) {
+                setError("Failed to fetch reports. Please try again.");
+            }
+            setLoading(false);
         };
         fetchReports();
     }, []);
-//asdasd
+
     return (
-        <div>
-            <h2>Waste Reports</h2>
-            {reports.map(report => (
-                <ReportCard key={report.id} report={report} />
-            ))}
+        <div className="min-h-screen bg-gray-100">
+            <div 
+                className="relative w-full bg-cover bg-center p-30" 
+                style={{ backgroundImage: "url('https://media.istockphoto.com/id/1200963979/vector/vector-illustration-of-recycling-concept-flat-modern-design-for-web-page-banner-presentation.jpg?s=612x612&w=0&k=20&c=9X3N35JAOIJf3KgY9-rJHVYAMQLdBOLX0_ZSl5tnAI0=')" }}>
+                <div className="flex flex-col items-center justify-center text-white text-center">
+                    <h1 className="text-4xl font-bold">Smart Waste Management</h1>
+                    <p className="text-lg mt-2">Efficient tracking and reporting of waste for a cleaner environment.</p>
+                </div>
+            </div>
+
+            <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-6">
+                <h2 className="text-3xl font-bold text-gray-800 text-center mb-4">Pending Waste Reports</h2>
+
+                {loading && <p className="text-blue-500 text-center text-lg">Loading reports...</p>}
+                {error && <p className="text-red-500 text-center">{error}</p>}
+                {!loading && reports.length === 0 && <p className="text-gray-500 text-center">No reports found.</p>}
+
+                {!loading && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        {reports.map((report) => (
+                            <ReportCard key={report.id} report={report} />
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

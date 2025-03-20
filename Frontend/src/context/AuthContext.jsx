@@ -1,28 +1,55 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../Components/services/supabase';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
+    // ✅ Load user from local storage on app start
     useEffect(() => {
-        const fetchUser = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            setUser(user);
-        };
-        fetchUser();
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
     }, []);
 
+    // ✅ Login function using plain text password from `users` table
     const login = async (email, password) => {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        setUser(data.user);
+        try {
+            console.log("Logging in with:", email, password);
+
+            const { data, error } = await supabase
+                .from("users")
+                .select("id, email, role")
+                .eq("email", email)
+                .eq("password", password) // Plain text password check
+                .single();
+
+            if (error || !data) {
+                console.error("❌ Login Error: Invalid credentials.");
+                alert("Invalid email or password");
+                return null;
+            }
+
+            const userData = { id: data.id, email: data.email, role: data.role };
+            setUser(userData);
+            localStorage.setItem("user", JSON.stringify(userData)); // ✅ Store session
+
+            console.log("✅ Login Successful:", userData);
+            return userData;
+        } catch (error) {
+            console.error("❌ Login Error:", error.message);
+            alert("Login failed. Try again.");
+            return null;
+        }
     };
 
+    // ✅ Logout function (Clear session)
     const logout = async () => {
-        await supabase.auth.signOut();
         setUser(null);
+        localStorage.removeItem("user");
+        console.log("✅ User logged out.");
     };
 
     return (
@@ -32,4 +59,5 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
+// ✅ Export the useAuth hook
 export const useAuth = () => useContext(AuthContext);

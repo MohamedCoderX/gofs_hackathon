@@ -47,5 +47,16 @@ router.get('/reports', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
+router.put("/reports/:id/clean", async (req, res) => {
+    const { id } = req.params;
 
+    const { data, error } = await supabase
+        .from("waste_reports")
+        .update({ status: "cleaned" })
+        .eq("id", id);
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.json({ message: "Report marked as cleaned", data });
+});
 export default router;
