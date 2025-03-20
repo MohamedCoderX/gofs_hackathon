@@ -27,7 +27,7 @@ const Home = () => {
         <div className="min-h-screen bg-gray-100">
             <div 
                 className="relative w-full bg-cover bg-center p-30" 
-                style={{ backgroundImage: "url('https://media.istockphoto.com/id/1200963979/vector/vector-illustration-of-recycling-concept-flat-modern-design-for-web-page-banner-presentation.jpg?s=612x612&w=0&k=20&c=9X3N35JAOIJf3KgY9-rJHVYAMQLdBOLX0_ZSl5tnAI0=')" }}>
+                style={{ backgroundImage: "url('https://img.freepik.com/free-vector/ecology-concept-with-people-cleaning-beach_23-2148425866.jpg?t=st=1742444304~exp=1742447904~hmac=02227e14f13e37c9e2d0be98c9e236ec29c4e4d257c64fb8b89d685f978496cb&w=1800')" }}>
                 <div className="flex flex-col items-center justify-center text-white text-center">
                     <h1 className="text-4xl font-bold">Smart Waste Management</h1>
                     <p className="text-lg mt-2">Efficient tracking and reporting of waste for a cleaner environment.</p>

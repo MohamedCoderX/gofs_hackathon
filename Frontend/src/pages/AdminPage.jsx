@@ -9,7 +9,8 @@ const AdminPage = () => {
     useEffect(() => {
         const fetchReports = async () => {
             const { data } = await getReports();
-            setReports(data);
+            const userReports = data.filter(report =>  report.status !== "cleaned");
+            setReports(userReports);
         };
         fetchReports();
     }, []);
@@ -51,43 +52,56 @@ const AdminPage = () => {
     };
 
     return (
-        <div>
-            <h2>Admin Dashboard</h2>
-            {reports.map((report) => (
-                <div key={report.id} style={{ border: "1px solid #ddd", padding: "10px", marginBottom: "10px" }}>
-                    <h3>{report.waste_type}</h3>
-                    <p>Location: {report.location}</p>
-                    <img src={report.image_url} alt="Waste" width="200" />
-                    <p>Status: <strong>{report.status}</strong></p>
+        <div className="p-6 bg-gray-100 min-h-screen">
+            <h2 className="text-4xl text-center text-gray-800 mb-8">Admin Dashboard</h2>
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {reports.map((report) => (
+                    <div key={report.id} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <img src={report.image_url} alt="Waste" className="w-full h-56 object-cover rounded-lg" />
+                        <div className="mt-4">
+                            <h3 className="text-xl font-semibold text-gray-800">{report.waste_type}</h3>
+                            <p className="text-gray-600">Location: {report.location}</p>
+                            <p className="mt-2 text-gray-700">Status: <strong>{report.status}</strong></p>
 
-                    <button
-                        onClick={() => handleUpdateStatus(report.id, "In Progress")}
-                        style={{ background: "orange", color: "white", marginRight: "10px" }}
-                    >
-                        Mark as In Progress
-                    </button>
+                            <div className="mt-4 space-x-3">
+                                <button
+                                    onClick={() => handleUpdateStatus(report.id, "In Progress")}
+                                    className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-600 transition duration-200"
+                                >
+                                    Mark as In Progress
+                                </button>
+                                <button
+                                    onClick={() => setSelectedReport(report)}
+                                    className="px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600 transition duration-200"
+                                >
+                                    Mark as Cleaned
+                                </button>
+                            </div>
 
-                    <button onClick={() => setSelectedReport(report)} style={{ background: "green", color: "white" }}>
-                        Mark as Cleaned
-                    </button>
-
-                    {/* Show file upload input when "Mark as Cleaned" is clicked */}
-                    {selectedReport?.id === report.id && (
-                        <div style={{ marginTop: "10px" }}>
-                            <label>Upload Cleaned Image:</label>
-                            <input type="file" onChange={handleFileChange} style={{ marginLeft: "10px" }} />
-                            <button
-                                onClick={() => handleUpdateStatus(report.id, "Cleaned")}
-                                style={{ background: "blue", color: "white", marginLeft: "10px" }}
-                            >
-                                Submit
-                            </button>
+                            {/* Show file upload input when "Mark as Cleaned" is clicked */}
+                            {selectedReport?.id === report.id && (
+                                <div className="mt-4">
+                                    <label htmlFor="file-upload" className="block text-sm text-gray-600">Upload Cleaned Image:</label>
+                                    <input
+                                        type="file"
+                                        id="file-upload"
+                                        onChange={handleFileChange}
+                                        className="mt-2 px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                    <button
+                                        onClick={() => handleUpdateStatus(report.id, "Cleaned")}
+                                        className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition duration-200"
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
+                            )}
                         </div>
-                    )}
-                </div>
-            ))}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
 
-export default AdminPage;
+export default AdminPage;

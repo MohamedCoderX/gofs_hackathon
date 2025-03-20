@@ -7,47 +7,62 @@ const Navbar = () => {
 
     const handleLogout = async () => {
         await logout();
-        navigate("/login"); // ✅ Navigate instead of full reload
+        navigate("/login");
     };
 
     return (
-        <nav className="bg-gray-800 text-white p-4 flex justify-between items-center">
-            {/* Left Side - Logo & Links */}
-            <div className="flex items-center space-x-4">
-                <Link to="/" className="text-lg font-bold hover:text-gray-300">Home</Link>
-                
-                {/* Upload Report (Only for logged-in users) */}
-                {user && <Link to="/upload" className="hover:text-gray-300">Upload Report</Link>}
-                <Link to="/cleaned-waste" style={{ color: "", marginRight: "15px" }}>Cleaned Waste</Link> 
+        <nav className="bg-black text-white fixed w-full top-0 left-0 z-50 shadow-md">
+            <div className="max-w-6xl mx-auto flex justify-between items-center py-4 px-6">
+                {/* Left Side - Logo & Links */}
+                <div className="flex items-center space-x-6">
+                    <Link to="/" className="text-2xl font-bold text-white hover:text-gray-400 transition">
+                        WasteTracker
+                    </Link>
 
-                {/* Admin Panel (Only for admins) */}
-                {user?.role === "admin" && <Link to="/admin" className="hover:text-gray-300">Admin Panel</Link>}
-            </div>
+                    {user && (
+                        <Link to="/upload" className="text-white hover:text-gray-400 transition">
+                            Upload Report
+                        </Link>
+                    )}
 
-            {/* Right Side - Auth Links */}
-            <div className="flex items-center space-x-4">
-                {user ? (
-                    <>
-                        {/* Dashboard (Only for regular users) */}
-                        {user?.role !== "admin" && (
-                            <Link to="/dashboard" className="hover:text-gray-300">Dashboard</Link>
-                        )}
+                    <Link to="/cleaned-waste" className="text-white hover:text-gray-400 transition">
+                        Cleaned Waste
+                    </Link>
 
-                        {/* Logout Button */}
-                        <button 
-                            onClick={handleLogout} 
-                            className="bg-red-500 px-4 py-2 rounded hover:bg-red-600 transition"
-                        >
-                            Logout
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        {/* Show Login & Signup if not logged in */}
-                        <Link to="/login" className="hover:text-gray-300">Login</Link>
-                        <Link to="/signup" className="hover:text-gray-300">Signup</Link>
-                    </>
-                )}
+                    {user?.role === "admin" && (
+                        <Link to="/admin" className="text-white hover:text-gray-400 transition">
+                            Admin Panel
+                        </Link>
+                    )}
+                </div>
+
+                {/* Right Side - Authentication Links */}
+                <div className="flex items-center space-x-4">
+                    {user ? (
+                        <>
+                            {user?.role !== "admin" && (
+                                <Link to="/dashboard" className="text-white hover:text-gray-400 transition">
+                                    Dashboard
+                                </Link>
+                            )}
+                            <button
+                                onClick={handleLogout}
+                                className="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition shadow-md"
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login" className="bg-gray-800 px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+                                Login
+                            </Link>
+                            <Link to="/signup" className="bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+                                Signup
+                            </Link>
+                        </>
+                    )}
+                </div>
             </div>
         </nav>
     );
